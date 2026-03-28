@@ -1,60 +1,53 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { useState, useEffect } from "react";
+import { useWindowSize } from "react-use";
 import Confetti from "react-confetti";
 import type { Winner } from "./types";
-import { useWindowSize } from "react-use";
+import WinnerCap from "./assets/winnerCap.svg";
 
 interface WinnerCardProps {
-    stage: { color: string; icon: string };
-    winner: Winner;
+  stage: { color: string; icon: string; place: number };
+  winner: Winner;
 }
 
 export const WinnerCard = ({ stage, winner }: WinnerCardProps) => {
-  const [showCard, setShowCard] = useState(false);
-  const [showConfetti, setShowConfetti] = useState(false);
+  const { width, height } = useWindowSize();
 
-  useEffect(() => {
-    // Delay card and confetti appearance by a few seconds
-    const timer = setTimeout(() => {
-      setShowConfetti(true);
-      setShowCard(true);
-    }, 2000); // 2 seconds delay
+  const shouldRender =
+    stage.place === 4 || stage.place === winner.place;
 
-    return () => clearTimeout(timer);
-  }, []);
-      const { width, height } = useWindowSize(); // for confetti
+  if (!shouldRender) return null;
 
   return (
-    <div className="relative">
-      {/* Show span immediately */}
-      <span className="text-3xl font-bold text-white block mb-4">
-        ${winner.place}rd Place ---
-      </span>
-
-      {/* Show confetti when card appears */}
-      {showConfetti && (
-        <Confetti
-          width={width}
-          height={height}
-          numberOfPieces={100}
-        />
-      )}
-
-      {/* Show card after delay with confetti */}
-      <AnimatePresence>
-        {showCard && (
-          <motion.div
-            key={winner.place}
-            className={`rounded-lg p-6 w-48 ${stage.color} text-white font-bold shadow-lg`}
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            🥉 {winner.name} — {winner.score} Points
-          </motion.div>
-        )}
-      </AnimatePresence>
+    <div className="relative flex flex-row items-center justify-center overflow-hidden bg-[black] h-screen w-screen">
+          {/* <Confetti
+            width={width}
+            height={height}
+            recycle={true}
+            numberOfPieces={1000 / winner.place}
+          /> */}
+          <AnimatePresence>
+            <motion.div
+              key={winner.place}
+              // className={`rounded-lg p-6 w-[25rem] h-[10rem] rounded-t-[130px] ${stage.color} text-white font-bold shadow-2xl z-10`}
+              initial={{ opacity: 0, y: 50, scale: 0.8 }}
+              animate={{
+                opacity: 1,
+                y: 0,
+                scale: [1, 1.05, 1], // subtle pulsing
+              }}  
+            >
+              <span className="text-[#ff0011] text-[57px] left-[49%] top-[-13px] font-[cursive] relative">
+                {winner.place}
+              </span>
+              <div className="flex flex-col items-center h-full font-[mono]">
+                <span className="text-[40px] font-[mono]">{winner.name}</span>
+                <span className="mt-[20px] text-[25px]">
+                  {winner.score} Points
+                </span>
+              </div>
+                <img src={WinnerCap} alt="Winner Cap" className="absolute top-[-50px] w-[80px] left-[calc(50%-40px)]" />
+            </motion.div>
+          </AnimatePresence>
     </div>
   );
-}
+};
