@@ -3,26 +3,44 @@ import { FaGooglePlay } from "react-icons/fa6";
 import { stages, winners } from "./const";
 import { WinnerCard } from "./WinnerCard";
 import { AnimatePresence, motion } from "framer-motion";
+import type { Winner } from "./types";
+
+const stageKeys = ["start", "third", "second", "first", "final"] as const;
+type StageKey = (typeof stageKeys)[number];
+
+const stageNext: Record<StageKey, StageKey | null> = {
+  start: "third",
+  third: "second",
+  second: "first",
+  first: "final",
+  final: null,
+};
+
+const stageTimeout: Record<StageKey, number | null> = {
+  start: null,
+  third: 3800,
+  second: 3800,
+  first: 6000,
+  final: null,
+};
+
+const winnerByStage: Partial<Record<StageKey, Winner>> = {
+  third: winners[0],
+  second: winners[1],
+  first: winners[2],
+};
 
 export default function FinalsReveal() {
-  const [stage, setStage] = useState<
-    "start" | "third" | "second" | "first" | "final"
-  >("start");
-  const [currWinner, setCurrWinner] = useState(winners[0]);
+  const [stage, setStage] = useState<StageKey>("start");
 
   useEffect(() => {
-    let timer: number;
+    const duration = stageTimeout[stage];
+    if (!duration) return;
 
-    if (stage === "third") {
-      setCurrWinner(winners[0]);
-      timer = window.setTimeout(() => setStage("second"), 3800);
-    } else if (stage === "second") {
-      setCurrWinner(winners[1]);
-      timer = window.setTimeout(() => setStage("first"), 3800);
-    } else if (stage === "first") {
-      setCurrWinner(winners[2]);
-      timer = window.setTimeout(() => setStage("final"), 6000);
-    }
+    const timer = window.setTimeout(() => {
+      const nextStage = stageNext[stage];
+      if (nextStage) setStage(nextStage);
+    }, duration);
 
     return () => window.clearTimeout(timer);
   }, [stage]);
@@ -31,9 +49,9 @@ export default function FinalsReveal() {
     if (stage === "start") setStage("third");
   };
 
-  const currentStage = stages[stage as keyof typeof stages];
-  const shouldRender =
-    currentStage.place === 4 || currentStage.place === currWinner.place;
+  const currentStage = stages[stage];
+  const activeWinner = winnerByStage[stage];
+  const shouldRender = stage !== "start";
 
   return (
     <div className="h-screen flex items-center justify-center bg-[#000000]">
@@ -80,24 +98,24 @@ export default function FinalsReveal() {
         </motion.button>
       )}
       {shouldRender && (
-        <div className="relative flex flex-row justify-around text-center items-center  overflow-hidden bg-[url('./assets/podium.jpg')] bg-cover bg-bottom h-screen w-screen">
-          {currentStage.place === 4 ? (
-            [winners[1], winners[2], winners[0]].map((winner) => (
+        <div className="relative flex flex-row justify-around text-center items-center overflow-hidden bg-[url('./assets/podium.jpg')] bg-cover bg-bottom h-screen w-screen">
+          <AnimatePresence mode="wait">
+            {currentStage.place === 4 ? (
+              [winners[1], winners[2], winners[0]].map((winner) => (
+                <WinnerCard
+                  key={winner.place}
+                  stage={currentStage}
+                  winner={winner}
+                />
+              ))
+            ) : (
               <WinnerCard
-                key={winner.place}
+                key={stage}
                 stage={currentStage}
-                winner={winner}
+                winner={activeWinner!}
               />
-            ))
-          ) : (
-            <AnimatePresence mode="wait">
-              <WinnerCard
-                key={currWinner.place}
-                stage={currentStage}
-                winner={currWinner}
-              />
-            </AnimatePresence>
-          )}
+            )}
+          </AnimatePresence>
         </div>
       )}
     </div>

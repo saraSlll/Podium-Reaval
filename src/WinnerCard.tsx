@@ -16,6 +16,13 @@ const glowTextShadow = [
   "0 0 5px #37032e",
 ];
 
+const pulseTransition = {
+  duration: 1.2,
+  ease: "easeInOut",
+  repeat: Infinity,
+  repeatType: "mirror",
+} as const;
+
 export const WinnerCard = ({ stage, winner }: WinnerCardProps) => {
   const { width, height } = useWindowSize();
   const entryDelay = stage.place === 4 ? 0 : 1.3;
@@ -25,7 +32,7 @@ export const WinnerCard = ({ stage, winner }: WinnerCardProps) => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      transition={{ duration: 0.5 }}
+      transition={{ duration: 0.4 }}
       className={`flex flex-col ${stage.place !== 4 ? "mb-[70px]" : ""} ${winner.place === 1 && stage.place === 4 ? "mb-[100px]" : "mb-[-200px]"}`}
     >
       {stage.place === 4 && (
@@ -38,7 +45,7 @@ export const WinnerCard = ({ stage, winner }: WinnerCardProps) => {
       )}
 
       <motion.span
-        initial={{ opacity: 0, scale: 0.6 }}
+        initial={{ opacity: 0, scale: 0.6, textShadow: "0 0 0px transparent" }}
         animate={{
           opacity: 1,
           scale: [1, 1.08, 1],
@@ -46,9 +53,8 @@ export const WinnerCard = ({ stage, winner }: WinnerCardProps) => {
         }}
         transition={{
           opacity: { duration: 0.6 },
-          duration: 1.2,
-          ease: "easeInOut",
-          repeat: Infinity,
+          scale: pulseTransition,
+          textShadow: pulseTransition,
         }}
         className="text-[#ffd2f8] text-[57px] font-[cursive]"
       >
@@ -56,7 +62,7 @@ export const WinnerCard = ({ stage, winner }: WinnerCardProps) => {
       </motion.span>
 
       <motion.div
-        initial={{ opacity: 0, scale: 0.6 }}
+        initial={{ opacity: 0, scale: 0.6, textShadow: "0 0 0px transparent" }}
         animate={{
           opacity: 1,
           scale: [1, 1.08, 1],
@@ -64,18 +70,8 @@ export const WinnerCard = ({ stage, winner }: WinnerCardProps) => {
         }}
         transition={{
           opacity: { duration: 0.6, delay: entryDelay },
-          scale: {
-            duration: 1.2,
-            delay: entryDelay,
-            ease: "easeInOut",
-            repeat: Infinity,
-          },
-          textShadow: {
-            duration: 1.2,
-            delay: entryDelay,
-            ease: "easeInOut",
-            repeat: Infinity,
-          },
+          scale: { ...pulseTransition, delay: entryDelay },
+          textShadow: { ...pulseTransition, delay: entryDelay },
         }}
         className="flex items-center text-center text-[110px] text-[#f1e6f0] h-[100px] mt-[17px]"
       >
