@@ -1,10 +1,10 @@
 
 export type StageConfig = {
-  third: { color: string; icon: string, place: number };
-  second: { color: string; icon: string, place: number };
-  first: { color: string; icon: string, place: number };
-  start: { color: string; icon: string, place: number };
-  final: { color: string; icon: string, place: number };
+  third: { color: string; place: number };
+  second: { color: string;  place: number };
+  first: { color: string;   place: number };
+  start: { color: string; place: number };
+  final: { color: string;  place: number };
 };
 
 export type Winner = {

@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { FaGooglePlay } from "react-icons/fa6";
 import { stages, winners } from "./const";
 import { WinnerCard } from "./WinnerCard";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 
 export default function FinalsReveal() {
   const [stage, setStage] = useState<
@@ -10,18 +10,18 @@ export default function FinalsReveal() {
   >("start");
   const [currWinner, setCurrWinner] = useState(winners[0]);
 
-   useEffect(() => {
+  useEffect(() => {
     let timer: number;
 
-    if (stage === 'third') {
+    if (stage === "third") {
       setCurrWinner(winners[0]);
-      timer = window.setTimeout(() => setStage('second'), 800);
-    } else if (stage === 'second') {
+      timer = window.setTimeout(() => setStage("second"), 3800);
+    } else if (stage === "second") {
       setCurrWinner(winners[1]);
-      timer = window.setTimeout(() => setStage('first'), 800);
-    } else if (stage === 'first') {
+      timer = window.setTimeout(() => setStage("first"), 3800);
+    } else if (stage === "first") {
       setCurrWinner(winners[2]);
-      timer = window.setTimeout(() => setStage('final'), 1000);
+      timer = window.setTimeout(() => setStage("final"), 6000);
     }
 
     return () => window.clearTimeout(timer);
@@ -32,19 +32,21 @@ export default function FinalsReveal() {
   };
 
   const currentStage = stages[stage as keyof typeof stages];
+  const shouldRender =
+    currentStage.place === 4 || currentStage.place === currWinner.place;
 
   return (
-    <div className="h-screen flex items-center justify-center bg-[#ffc600]">
+    <div className="h-screen flex items-center justify-center bg-[#000000]">
       {stage === "start" && (
         <motion.button
           onClick={nextStage}
           animate={{
             boxShadow: [
-              "0 0 5px #ff1100",
-              "0 0 20px #df1a0c",
-              "0 0 40px #a31107",
-              "0 0 20px #df1a0c",
-              "0 0 5px #ff1100",
+              "0 0 5px #740c67",
+              "0 0 20px #3b0632",
+              "0 0 40px #8716c4",
+              "0 0 20px #3b0632",
+              "0 0 5px #740c67",
             ],
           }}
           transition={{
@@ -57,7 +59,7 @@ export default function FinalsReveal() {
     flex items-center justify-center
     rounded-[65px]
     bg-[#261E0D]
-    text-[#ff1100]
+    text-[#8716c4]
     border-4 border-red-600
     font-[cursive] text-[50px]
     cursor-pointer
@@ -72,22 +74,31 @@ export default function FinalsReveal() {
               ease: "easeInOut",
             }}
           >
-            <FaGooglePlay color="yellow" />
+            <FaGooglePlay color="#8716c4" />
             <span className="ml-[5px]">Start!</span>
           </motion.div>
         </motion.button>
       )}
-
-      {currentStage.place === 4 ? (
-          winners.map((winner) => (
-            <WinnerCard
-              key={winner.place}
-              stage={currentStage}
-              winner={winner}
-            />
-          ))
-      ) : (
-        <WinnerCard stage={currentStage} winner={currWinner} />
+      {shouldRender && (
+        <div className="relative flex flex-row justify-around text-center items-center  overflow-hidden bg-[url('./assets/podium.jpg')] bg-cover bg-bottom h-screen w-screen">
+          {currentStage.place === 4 ? (
+            [winners[1], winners[2], winners[0]].map((winner) => (
+              <WinnerCard
+                key={winner.place}
+                stage={currentStage}
+                winner={winner}
+              />
+            ))
+          ) : (
+            <AnimatePresence mode="wait">
+              <WinnerCard
+                key={currWinner.place}
+                stage={currentStage}
+                winner={currWinner}
+              />
+            </AnimatePresence>
+          )}
+        </div>
       )}
     </div>
   );
