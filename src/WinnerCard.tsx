@@ -64,8 +64,18 @@ export const WinnerCard = ({ stage, winner }: WinnerCardProps) => {
         }}
         transition={{
           opacity: { duration: 0.6, delay: entryDelay },
-          scale: { duration: 1.2, delay: entryDelay, ease: "easeInOut", repeat: Infinity },
-          textShadow: { duration: 1.2, delay: entryDelay, ease: "easeInOut", repeat: Infinity },
+          scale: {
+            duration: 1.2,
+            delay: entryDelay,
+            ease: "easeInOut",
+            repeat: Infinity,
+          },
+          textShadow: {
+            duration: 1.2,
+            delay: entryDelay,
+            ease: "easeInOut",
+            repeat: Infinity,
+          },
         }}
         className="flex items-center text-center text-[110px] text-[#f1e6f0] h-[100px] mt-[17px]"
       >
