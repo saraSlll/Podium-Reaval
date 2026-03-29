@@ -1,3 +1,19 @@
+## Quick Start
+
+Node.js >= 18 is recommended. NVM is optional for managing Node versions.
+
+Install dependencies:
+
+```bash
+yarn install
+
+Start the development server:
+
+yarn dev
+
+This immediately tells anyone cloning your repo which Node/NVM version to use and how to get started with Yarn.  
+
+
 # React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
