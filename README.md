@@ -10,8 +10,7 @@ yarn install
 Start the development server:
 
 yarn dev
-
-This immediately tells anyone cloning your repo which Node/NVM version to use and how to get started with Yarn.  
+  
 
 
 # React + TypeScript + Vite
